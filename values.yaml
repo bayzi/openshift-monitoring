@@ -1,0 +1,75 @@
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+  portName: service
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: prometheus
+        type: prometheus
+        url: https://prometheus-k8s.openshift-monitoring.svc:9091
+        access: proxy
+        basicAuth: true
+        basicAuthUser: XXXXXX
+        editable: false
+        jsonData:
+          tlsSkipVerify: true
+        secureJsonData:
+          basicAuthPassword: XXXXXXX
+        orgId: 1
+        version: 1
+
+adminUser: admin
+adminPassword: SECURE_PASSWORD
+
+dashboards:
+  mysql:
+    innoDB-metrics:
+      file: dashboards/grafana-dashboard-mysql-innoDB-metrics.json
+    overview:
+      file: dashboards/grafana-dashboard-mysql-overview.json
+    performance-schema-wait-event:
+      file: dashboards/grafana-dashboard-mysql-performance_Schema_Wait_Event_Analyses.json
+    performance_Schema:
+      file: dashboards/grafana-dashboard-mysql-Performance_Schema.json
+    table-statistics:
+      file: dashboards/grafana-dashboard-mysql-Table_Statistics.json
+  oc:
+    nodes-rsrc-use:
+      file: dashboards/grafana-dashboard-k8s-node-rsrc-use.json
+    resources-cluster:
+      file: dashboards/grafana-dashboard-k8s-resources-cluster.json
+    resources-namespace:
+      file: dashboards/grafana-dashboard-k8s-resources-namespace.json
+    resources-pod:
+      file: dashboards/grafana-dashboard-k8s-resources-pod.json
+    nodes:
+      file: dashboards/grafana-dashboard-nodes.json
+    statefulset:
+      file: dashboards/grafana-dashboard-statefulset.json
+    persistentvolumesusage:
+      file: dashboards/grafana-dashboard-persistentvolumesusage.json
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: "mysql"
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/mysql
+      - name: "oc"
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/oc
